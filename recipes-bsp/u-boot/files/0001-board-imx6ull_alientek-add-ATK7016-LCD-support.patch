@@ -1,0 +1,156 @@
+From c278872f34412593404cc98298904e77ed4b8d8b Mon Sep 17 00:00:00 2001
+From: lizhuo <1349952851@qq.com>
+Date: Tue, 8 Sep 2026 23:32:34 +0800
+Subject: [PATCH] board: imx6ull_alientek: add ATK7016 LCD support
+
+Add device tree display timings for the Alientek ATK7016 7-inch
+LCD panel (1024x600). Force video probe during board_init() and
+enable backlight via GPIO1_IO08 so the screen lights up and shows
+U-Boot output.
+
+Signed-off-by: lizhuo <1349952851@qq.com>
+---
+ arch/arm/dts/imx6ull_alientek.dts             | 42 +++++++++++++++++++
+ .../imx6ull_alientek/imx6ull_alientek.c       | 26 ++++++++++++
+ configs/imx6ull_alientek_defconfig            | 11 +++++
+ include/configs/imx6ull_alientek.h            |  2 +
+ 4 files changed, 81 insertions(+)
+
+diff --git a/arch/arm/dts/imx6ull_alientek.dts b/arch/arm/dts/imx6ull_alientek.dts
+index 74edd7c5c9..2723e9163f 100644
+--- a/arch/arm/dts/imx6ull_alientek.dts
++++ b/arch/arm/dts/imx6ull_alientek.dts
+@@ -16,3 +16,45 @@
+ 	assigned-clocks = <&clks IMX6UL_CLK_PLL3_PFD2>;
+ 	assigned-clock-rates = <320000000>;
+ };
++
++&lcdif {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_lcdif_dat &pinctrl_lcdif_ctrl>;
++	status = "okay";
++
++	assigned-clocks = <&clks IMX6UL_CLK_LCDIF_PRE_SEL>,
++					  <&clks IMX6UL_CLK_LCDIF_SEL>,
++					  <&clks IMX6UL_CLK_LCDIF_PIX>;
++	assigned-clock-parents = <&clks IMX6UL_CLK_PLL5_VIDEO_DIV>,
++							 <&clks IMX6UL_CLK_LCDIF_PRE_SEL>;
++	assigned-clock-rates = <0>, <0>, <51200000>;
++
++	display = <&display0>;
++	display0: display@0 {
++		bits-per-pixel = <24>;
++		bus-width = <24>;
++		display-timings {
++			native-mode = <&timing0>;
++			timing0: timing0 {
++				clock-frequency = <51200000>;
++				hactive = <1024>;
++				vactive = <600>;
++				hback-porch = <140>;
++				hfront-porch = <160>;
++				hsync-len = <20>;
++				vback-porch = <20>;
++				vfront-porch = <12>;
++				vsync-len = <3>;
++				hsync-active = <0>;
++				vsync-active = <0>;
++				de-active = <1>;
++				pixelclk-active = <0>;
++			};
++		};
++	};
++};
++
++&backlight_display {
++	status = "okay";
++	enable-gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
++};
+\ No newline at end of file
+diff --git a/board/freescale/imx6ull_alientek/imx6ull_alientek.c b/board/freescale/imx6ull_alientek/imx6ull_alientek.c
+index 86c11c7bd3..0bf695b895 100644
+--- a/board/freescale/imx6ull_alientek/imx6ull_alientek.c
++++ b/board/freescale/imx6ull_alientek/imx6ull_alientek.c
+@@ -21,6 +21,8 @@
+ #include <linux/sizes.h>
+ #include <mmc.h>
+ #include <miiphy.h>
++#include <dm/uclass.h>
++#include <video.h>
+ 
+ DECLARE_GLOBAL_DATA_PTR;
+ 
+@@ -104,6 +106,26 @@ int board_phy_config(struct phy_device *phydev)
+ }
+ #endif
+ 
++#ifdef CONFIG_DM_VIDEO
++static int initr_video_force_probe(void)
++{
++    struct udevice *vdev = NULL;
++    int ret;
++
++    ret = uclass_get_device(UCLASS_VIDEO, 0, &vdev);
++
++	if (ret == 0)
++	{
++		ret = gpio_request(8, "lcd-bl");
++		if (ret == 0)
++			gpio_direction_output(8, 1);
++		else
++			printf("*** gpio_request(8) failed, ret=%d ***\n",ret);
++	}
++    return 0;
++}
++#endif
++
+ int board_init(void)
+ {
+ 	/* Address of boot parameters */
+@@ -113,6 +135,10 @@ int board_init(void)
+ 	setup_fec(CONFIG_FEC_ENET_DEV);
+ #endif
+ 
++#ifdef CONFIG_DM_VIDEO
++	initr_video_force_probe();
++#endif
++
+ 	return 0;
+ }
+ 
+diff --git a/configs/imx6ull_alientek_defconfig b/configs/imx6ull_alientek_defconfig
+index 3753a0bd41..b17d517765 100644
+--- a/configs/imx6ull_alientek_defconfig
++++ b/configs/imx6ull_alientek_defconfig
+@@ -65,3 +65,14 @@ CONFIG_DM_SPI=y
+ CONFIG_FSL_QSPI=y
+ CONFIG_SOFT_SPI=y
+ CONFIG_IMX_THERMAL=y
++CONFIG_DM_VIDEO=y
++CONFIG_VIDEO_MXS=y
++CONFIG_DM_PWM=y
++CONFIG_PWM_IMX=y
++CONFIG_BACKLIGHT_PWM=y
++CONFIG_SYS_CONSOLE_IS_IN_ENV=y
++CONFIG_VIDEO_LOGO=y
++CONFIG_BMP=y
++CONFIG_CMD_BMP=y
++CONFIG_VIDEO_BMP_LOGO=y
++CONFIG_CONSOLE_MUX=y
+\ No newline at end of file
+diff --git a/include/configs/imx6ull_alientek.h b/include/configs/imx6ull_alientek.h
+index 93b565c244..85f5326bbe 100644
+--- a/include/configs/imx6ull_alientek.h
++++ b/include/configs/imx6ull_alientek.h
+@@ -24,6 +24,8 @@
+ #define CONFIG_SYS_FSL_USDHC_NUM	2
+ #endif
+ 
++#define MXS_LCDIF_BASE  MX6ULL_LCDIF1_BASE_ADDR
++
+ #define CONFIG_EXTRA_ENV_SETTINGS \
+ 	"script=boot.scr\0" \
+ 	"image=zImage\0" \
+-- 
+2.34.1
+
