@@ -10,14 +10,17 @@ meta-alientek 是一个基于 Yocto/OpenEmbedded 的 BSP（Board Support Package
 meta-alientek/
 ├── conf/
 │   └── layer.conf          # Yocto 层配置文件
-└── recipes-bsp/
-    └── u-boot/
-        ├── files/
-        │   ├── 0001-board-imx6ull_alientek-add-initial-board-support.patch
-        │   ├── 0001-board-imx6ull_alientek-add-ATK7016-LCD-support.patch
-        │   ├── 0001-Modify-the-default-startup-address-and-board-name-at.patch
-        │   └── 0001-mx6ull_atom-Disable-network-support-to-reduce-U-Boot.patch
-        └── u-boot-fslc_%.bbappend
+├── recipes-bsp/
+│   └── u-boot/
+│       ├── files/
+│       │   ├── 0001-board-imx6ull_alientek-add-initial-board-support.patch
+│       │   ├── 0001-board-imx6ull_alientek-add-ATK7016-LCD-support.patch
+│       │   ├── 0001-Modify-the-default-startup-address-and-board-name-at.patch
+│       │   └── 0001-mx6ull_atom-Disable-network-support-to-reduce-U-Boot.patch
+│       └── u-boot-fslc_%.bbappend
+└── recipes-core/
+    └── images/
+        └── alientek-image.bb
 ```
 
 ## 主要组件
@@ -35,6 +38,9 @@ meta-alientek/
   - ATK7016 LCD 屏幕支持
   - 默认启动地址和开发板名称修改
   - 禁用网络支持以减小 U-Boot 体积
+
+### 3. recipes-core/images/alientek-image.bb
+- 定义 AlienTek 开发板的根文件系统镜像配方
 
 ## 支持的硬件
 
@@ -76,12 +82,18 @@ MACHINE = "imx6ull_alientek"
 bitbake core-image-minimal
 ```
 
+或者构建 AlienTek 定制镜像：
+```bash
+bitbake alientek-image
+```
+
 ## 主要功能
 
 - **U-Boot 定制**: 针对 AlienTek 开发板的 U-Boot 配置和优化
 - **LCD 支持**: 提供 ATK7016 LCD 屏幕驱动支持
 - **板级支持**: 完整的 i.MX6ULL 开发板初始化代码
 - **系统集成**: 与 Freescale Community BSP 的无缝集成
+- **定制镜像**: 提供开箱即用的 AlienTek 根文件系统镜像
 
 ## 维护者
 
