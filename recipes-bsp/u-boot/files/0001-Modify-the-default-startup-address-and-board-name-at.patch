@@ -1,0 +1,51 @@
+From 16955aab5631c2c022111f7035cdcb11bf23cffb Mon Sep 17 00:00:00 2001
+From: lizhuo <1349952851@qq.com>
+Date: Fri, 25 Sep 2026 13:03:46 +0800
+Subject: [PATCH] Modify the default startup address and board name at the
+ board level
+
+---
+ board/freescale/imx6ull_alientek/imx6ull_alientek.c | 6 +++---
+ configs/imx6ull_alientek_defconfig                  | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/board/freescale/imx6ull_alientek/imx6ull_alientek.c b/board/freescale/imx6ull_alientek/imx6ull_alientek.c
+index 0bf695b895..5c2cac2b0a 100644
+--- a/board/freescale/imx6ull_alientek/imx6ull_alientek.c
++++ b/board/freescale/imx6ull_alientek/imx6ull_alientek.c
+@@ -162,8 +162,8 @@ int board_late_init(void)
+ 	if (is_cpu_type(MXC_CPU_MX6ULZ))
+ 		env_set("board_name", "ULZ-EVK");
+ 	else
+-		env_set("board_name", "EVK");
+-	env_set("board_rev", "14X14");
++		env_set("board_name", "alientek");
++	env_set("board_rev", "v1");
+ #endif
+ 
+ 	return 0;
+@@ -174,7 +174,7 @@ int checkboard(void)
+ 	if (is_cpu_type(MXC_CPU_MX6ULZ))
+ 		puts("Board: MX6ULZ 14x14 EVK\n");
+ 	else
+-		puts("Board: MX6ULL 14x14 EVK\n");
++		puts("Board: IMX6ULL ALIENTEK\n");
+ 
+ 	return 0;
+ }
+diff --git a/configs/imx6ull_alientek_defconfig b/configs/imx6ull_alientek_defconfig
+index 5ef4dc50b4..654cdc92dc 100644
+--- a/configs/imx6ull_alientek_defconfig
++++ b/configs/imx6ull_alientek_defconfig
+@@ -33,7 +33,7 @@ CONFIG_OF_CONTROL=y
+ CONFIG_ENV_OVERWRITE=y
+ CONFIG_ENV_IS_IN_MMC=y
+ CONFIG_SYS_RELOC_GD_ENV_ADDR=y
+-CONFIG_SYS_MMC_ENV_DEV=1
++CONFIG_SYS_MMC_ENV_DEV=0
+ CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
+ CONFIG_BOUNCE_BUFFER=y
+ CONFIG_DM_74X164=y
+-- 
+2.34.1
+
