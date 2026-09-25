@@ -1,7 +1,3 @@
-
-
-I apologize for the difficulties in accessing the repository. Based on the code map you provided, I can see this is a Yocto/OpenEmbedded layer project for AlienTek hardware. Let me create a comprehensive README.md based on the available information.
-
 # meta-alientek
 
 ## 简介
@@ -17,7 +13,10 @@ meta-alientek/
 └── recipes-bsp/
     └── u-boot/
         ├── files/
-        │   └── 0001-board-imx6ull_alientek-add-initial-board-support.patch
+        │   ├── 0001-board-imx6ull_alientek-add-initial-board-support.patch
+        │   ├── 0001-board-imx6ull_alientek-add-ATK7016-LCD-support.patch
+        │   ├── 0001-Modify-the-default-startup-address-and-board-name-at.patch
+        │   └── 0001-mx6ull_atom-Disable-network-support-to-reduce-U-Boot.patch
         └── u-boot-fslc_%.bbappend
 ```
 
@@ -31,7 +30,11 @@ meta-alientek/
 ### 2. recipes-bsp/u-boot/
 - 包含 U-Boot 引导程序的定制配置
 - `u-boot-fslc_%.bbappend` 文件用于扩展 U-Boot 配方
-- `0001-board-imx6ull_alientek-add-initial-board-support.patch` 提供 i.MX6ULL AlienTek 开发板的初始支持
+- 提供多个补丁文件，实现以下功能：
+  - i.MX6ULL AlienTek 开发板的初始支持
+  - ATK7016 LCD 屏幕支持
+  - 默认启动地址和开发板名称修改
+  - 禁用网络支持以减小 U-Boot 体积
 
 ## 支持的硬件
 
@@ -41,8 +44,8 @@ meta-alientek/
 ## 依赖关系
 
 本层依赖以下基础层：
-- meta-fslc (提供 Freescale/Community U-Boot 和 Linux 内核支持)
-- meta-oe (OpenEmbedded 基元层)
+- meta-fslc（提供 Freescale/Community U-Boot 和 Linux 内核支持）
+- meta-oe（OpenEmbedded 基元层）
 - 其他标准的 Yocto 层
 
 ## 使用方法
@@ -76,6 +79,7 @@ bitbake core-image-minimal
 ## 主要功能
 
 - **U-Boot 定制**: 针对 AlienTek 开发板的 U-Boot 配置和优化
+- **LCD 支持**: 提供 ATK7016 LCD 屏幕驱动支持
 - **板级支持**: 完整的 i.MX6ULL 开发板初始化代码
 - **系统集成**: 与 Freescale Community BSP 的无缝集成
 
