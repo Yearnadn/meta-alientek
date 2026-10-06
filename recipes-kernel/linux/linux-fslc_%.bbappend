@@ -3,6 +3,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 SRC_URI += " \
     file://imx6ull-alientek.dts \
     file://imx6ull-alientek.dtsi \
+    file://defconfig \
 "
 do_configure:append() {
     cp -f ${WORKDIR}/imx6ull-alientek.dts  ${S}/arch/arm/boot/dts/
