@@ -9,7 +9,7 @@ meta-alientek 是一个基于 Yocto/OpenEmbedded 的 BSP（Board Support Package
 ```
 meta-alientek/
 ├── conf/
-│   └── layer.conf          # Yocto 层配置文件
+│   └── layer.conf              # Yocto 层配置文件
 ├── recipes-bsp/
 │   └── u-boot/
 │       ├── files/
@@ -18,9 +18,15 @@ meta-alientek/
 │       │   ├── 0001-Modify-the-default-startup-address-and-board-name-at.patch
 │       │   └── 0001-mx6ull_atom-Disable-network-support-to-reduce-U-Boot.patch
 │       └── u-boot-fslc_%.bbappend
-└── recipes-core/
-    └── images/
-        └── alientek-image.bb
+├── recipes-core/
+│   └── images/
+│       └── alientek-image.bb
+└── recipes-kernel/
+    └── linux/
+        ├── files/
+        │   ├── imx6ull-alientek.dtsi
+        │   └── imx6ull-alientek.dts
+        └── linux-fslc_%.bbappend
 ```
 
 ## 主要组件
@@ -42,10 +48,17 @@ meta-alientek/
 ### 3. recipes-core/images/alientek-image.bb
 - 定义 AlienTek 开发板的根文件系统镜像配方
 
+### 4. recipes-kernel/linux/
+- 包含 Linux 内核设备树文件
+- `imx6ull-alientek.dtsi` - AlienTek 开发板设备树头文件
+- `imx6ull-alientek.dts` - AlienTek 开发板设备树配置
+- `linux-fslc_%.bbappend` - Linux 内核配方扩展文件
+
 ## 支持的硬件
 
 - **处理器**: NXP i.MX6ULL
 - **开发板**: AlienTek i.MX6ULL 开发板
+- **显示屏**: ATK7016 LCD 屏幕
 
 ## 依赖关系
 
@@ -91,6 +104,7 @@ bitbake alientek-image
 
 - **U-Boot 定制**: 针对 AlienTek 开发板的 U-Boot 配置和优化
 - **LCD 支持**: 提供 ATK7016 LCD 屏幕驱动支持
+- **设备树支持**: 完整的 i.MX6ULL AlienTek 设备树配置
 - **板级支持**: 完整的 i.MX6ULL 开发板初始化代码
 - **系统集成**: 与 Freescale Community BSP 的无缝集成
 - **定制镜像**: 提供开箱即用的 AlienTek 根文件系统镜像
