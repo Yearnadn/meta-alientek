@@ -8,7 +8,7 @@ IMAGE_NAME = "alientek-image"
 IMAGE_INSTALL = " \
     packagegroup-core-boot \
     packagegroup-core-ssh-openssh \
-    vim \
+    vim ethtool\
 "
 
 IMAGE_FSTYPES = "ext4 tar.bz2"
