@@ -5,6 +5,7 @@ SRC_URI:append = " \
     file://0001-board-imx6ull_alientek-add-ATK7016-LCD-support.patch \
     file://0001-mx6ull_atom-Disable-network-support-to-reduce-U-Boot.patch \
     file://0001-Modify-the-default-startup-address-and-board-name-at.patch \
+    file://0001-imx6ull-alientek-add-A-B-slot-update-support.patch \
 "
 do_configure:prepend() {
     rm -f ${S}/.config

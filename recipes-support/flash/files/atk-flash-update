@@ -1,0 +1,52 @@
+#!/bin/bash
+# atk-flash <target> <image_path>
+# target: uboot | kernel | dtb | rootfs
+# image_path: 升级文件镜像文件路径
+
+TARGET=$1
+IMG=$2
+SLOT=$(fw_printenv -n boot_slot)   # 当前槽位 a 或 b
+if [ "$SLOT" = "a" ]; then
+    NEW_SLOT=b
+    NEW_BOOT_PART=2
+else
+    NEW_SLOT=a
+    NEW_BOOT_PART=1 
+fi
+
+NEW_ROOT_PART=3
+
+case "$TARGET" in
+  uboot)
+    # 写 U-Boot 到 SD 卡偏移 1KB
+    dd if="$IMG" of=/dev/mmcblk0 bs=1k seek=1 conv=fsync
+    ;;
+  kernel)
+    # 写内核到非活动 boot 分区
+    mount /dev/mmcblk0p${NEW_BOOT_PART} /mnt
+    cp "$IMG" /mnt/zImage
+    sync
+    umount /mnt
+    ;;
+  dtb)
+    mount /dev/mmcblk0p${NEW_BOOT_PART} /mnt
+    cp "$IMG" /mnt/imx6ull-alientek.dtb
+    sync
+    umount /mnt
+    ;;
+  rootfs)
+    # 写根文件系统到非活动分区
+    dd if="$IMG" of=/dev/mmcblk0p${NEW_ROOT_PART} bs=4M conv=fsync
+    ;;
+  *)
+    echo "Unknown target: $TARGET"
+    exit 1
+    ;;
+esac
+
+# 切换引导槽位
+fw_setenv boot_slot "$NEW_SLOT"
+fw_setenv bootcount 0
+
+echo "Update complete. Rebooting to slot $NEW_SLOT..."
+reboot
