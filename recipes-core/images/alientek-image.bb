@@ -6,7 +6,8 @@ IMAGE_NAME = "alientek-image"
 IMAGE_INSTALL = " \
     packagegroup-core-boot \
     packagegroup-core-ssh-openssh \
-    vim ethtool \
+    vim ethtool dbus systemd \
+    libgpiod libgpiod-tools \
     libubootenv-bin \
     rsync \
     e2fsprogs-resize2fs \
