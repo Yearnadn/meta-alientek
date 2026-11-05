@@ -5,8 +5,6 @@ POKY_BBLAYERS_CONF_VERSION = "2"
 BBPATH = "${TOPDIR}"
 BBFILES ?= ""
 
-BASEDIR := "${@os.path.dirname(d.getVar('OEROOT'))}"
-
 BBLAYERS ?= " \
   ##OEROOT##/meta                           \
   ##OEROOT##/meta-poky                      \
