@@ -1,0 +1,19 @@
+### ALIENTEK Yocto BSP environment set up ###
+
+You can now run 'bitbake <target>'
+
+Common targets for this BSP:
+    bitbake alientek-image              # ALIENTEK i.MX6ULL rootfs (ext4 + tar.bz2)
+    bitbake core-image-minimal          # minimal test image
+    bitbake meta-toolchain              # cross-toolchain
+    bitbake meta-ide-support            # IDE integration
+
+Flash to SD card (after build):
+    sudo dd if=tmp/deploy/images/<machine>/alientek-image-<machine>.rootfs.ext4 \
+             of=/dev/sdX bs=4M status=progress
+
+Other commonly useful commands are:
+ - 'devtool' and 'recipetool' handle common recipe tasks
+ - 'bitbake-layers' handles common layer tasks
+ - 'oe-pkgdata-util' handles common target package tasks
+ 

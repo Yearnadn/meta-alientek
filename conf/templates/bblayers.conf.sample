@@ -1,0 +1,17 @@
+# POKY_BBLAYERS_CONF_VERSION is increased each time build/conf/bblayers.conf
+# changes incompatibly
+POKY_BBLAYERS_CONF_VERSION = "2"
+
+BBPATH = "${TOPDIR}"
+BBFILES ?= ""
+
+BASEDIR := "${@os.path.dirname(d.getVar('OEROOT'))}"
+
+BBLAYERS ?= " \
+  ##OEROOT##/meta                           \
+  ##OEROOT##/meta-poky                      \
+  ##OEROOT##/meta-yocto-bsp                 \
+  ##PROJECTPATH##/meta-openembedded/meta-oe           \
+  ##PROJECTPATH##/meta-freescale                      \
+  ##PROJECTPATH##/meta-alientek                       \
+"
